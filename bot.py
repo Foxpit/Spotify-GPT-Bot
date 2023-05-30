@@ -1,10 +1,3 @@
-# %%
-%pip install spotipy
-%pip install openai
-
-# %%
-
-
 import os
 import getpass 
 import openai
