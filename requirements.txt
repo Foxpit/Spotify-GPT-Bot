@@ -1,2 +1,7 @@
-openai==0.27.7
-spotipy==2.23.0
+spotipy
+openai
+flask
+pipreqs
+fastapi
+redis
+flask_session

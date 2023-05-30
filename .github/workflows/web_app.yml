@@ -1,15 +1,12 @@
-name: Build and deploy Python app to Azure Web App
+name: Build and deploy Spotify-GPT-Bot Python app to Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: your-app-name # set this to your application's name
+  AZURE_WEBAPP_NAME: Spotify-GPT-Bot # set this to your application's name
   WORKING_DIRECTORY: '.' # set this to the path to your path of working directory inside github repository, defaults to the repository root
   PYTHON_VERSION: '3.9' 
   STARTUP_COMMAND: 'gunicorn -w 2 -k uvicorn.workers.UvicornWorker webapp.main:app' # set this to the startup command required to start the gunicorn server. default it is empty
 
 on:
-  # uncomment the next two lines to deploy on every push to main
-  #push: 
-  #  branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -40,18 +37,23 @@ jobs:
   - uses: azure/login@v1
     with:
      creds: ${{ secrets.AZURE_CREDENTIALS }}
-  - uses: azure/appservice-settings@v1
+  
+  - name: Set OpenAI key
+    run: echo "OPENAI_KEY=${{ secrets.OPENAI_KEY }}" >> $GITHUB_ENV
+      
+  - uses: azure/appservice-settings@v1  
     with:
      app-name: ${{ env.AZURE_WEBAPP_NAME }}
      mask-inputs: false
      general-settings-json: '{"linuxFxVersion": "PYTHON|${{ env.PYTHON_VERSION }}"}' #'General configuration settings as Key Value pairs'
-  # deploy web app
+
   - uses: azure/webapps-deploy@v2
     with:
      app-name: ${{ env.AZURE_WEBAPP_NAME }}
      package: ${{ env.WORKING_DIRECTORY }}
      startup-command: ${{ env.STARTUP_COMMAND }}
-  # Azure logout
+
+     
   - name: logout
     run: |
      az logout
