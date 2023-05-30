@@ -1,43 +1,65 @@
 import os
 import getpass
 import openai
+import logging
 from user import User
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Get OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-if (openai.api_key is None):
-    print("Environment variable not set. Requesting user input...")
+if openai.api_key is None:
+    logger.error("Environment variable not set. Requesting user input...")
     openai.api_key = getpass.getpass("Please enter your OpenAI API key: ")
 
 
 def handle_bot(data):
-    # Create user instance
-    user = User()
+    if not isinstance(data, dict):
+        logger.error("Invalid data format. Expected a dictionary.")
+        return {'error': 'Invalid request'}
 
-    # Get user's top genres
-    user.get_top_genres()
+    try:
+        # Create user instance
+        user = User()
 
-    # Select a top genre
-    top_genre = user.select_genre()
+        # Get user's top genres
+        user.get_top_genres()
 
-    # Get artists of the selected genre
-    artists = user.get_genre_artists(top_genre)
+        # Select a top genre
+        top_genre = user.select_genre()
 
-    # Generate playlist name
-    playlist_name = f"{top_genre} playlist by {artists}"
+        if not top_genre:
+            return {'error': 'Invalid genre index'}
 
-    # Create new playlist
-    playlist = user.sp.user_playlist_create(
+        # Get artists of the selected genre
+        artists = user.get_genre_artists(top_genre)
+
+        # Generate playlist name
+        playlist_name = f"My {top_genre.capitalize()} Playlist"
+
+        # Create new playlist
+        playlist = user.sp.user_playlist_create(
             os.getenv("SPOTIFY_USERNAME"),
             playlist_name
         )
 
-    return {
+        # Get user's top tracks
+        top_tracks = user.get_top_tracks()
+
+        # Add tracks to the playlist
+        user.sp.playlist_add_items(playlist['id'], top_tracks)
+
+        return {
             'status': 'Playlist created successfully',
             'playlist_name': playlist_name
         }
+    except Exception as e:
+        logger.exception("Error occurred while handling bot request:")
+        return {'error': str(e)}
 
 
 # def handle_bot(data):
