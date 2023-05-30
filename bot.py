@@ -1,9 +1,10 @@
 # %%
-# import packages
 %pip install spotipy
 %pip install openai
 
 # %%
+
+
 import os
 import getpass 
 import openai
@@ -12,43 +13,6 @@ import random
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 from random import sample
 
-
-# # Get OpenAI API key
-# openai.api_key = getpass("Please enter your OpenAI API key: ")
-
-# def define_spotify():
-#     print("1: Enter your Spotify API key\n2: Enter your Spotify id or username")
-#     spotify_option = input("Input (1 or 2): ")
-
-#     if spotify_option not in ['1', '2']:
-#         print("Must input either 1 or 2")
-#         return define_spotify()
-
-#     if spotify_option == '1':
-#         return getpass("Please enter your Spotify API key: ")
-    
-#     elif spotify_option == '2':
-#         print("1: Spotify ID\n2:  Enter your username")
-#         spotify_optionUorC = input("Input (1 or 2): ")
-        
-
-#         if spotify_optionUorC not in ['1', '2']:
-#             print("Must input either 1 or 2")
-#             return define_spotify()
-        
-#         if spotify_optionUorC == '1':
-#             username = input("Username: ")
-#             scope = "user-library-read playlist-modify-public"
-
-
-#         if spotify_optionUorC == '2':
-#             clientID = input("ClientID: ")
-#             scope = "user-library-read playlist-modify-public"
-#             os.environ["SPOTIPY_CLIENT_SECRET"] = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=clientID ,open_browser=True,))
-
-
-
-# spotify = define_spotify()
 
 
 # Get OpenAI API key
